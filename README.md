@@ -7,6 +7,7 @@ Dieses Repository enthält eine **fusionierte Chromium-Extension** mit Fokus auf
 
 ## Neu in dieser Revision
 
+- Icons werden separat bereitgestellt (bereits extern gepusht).
 - Persistente Einstellungen (`chrome.storage.local`) für Lesegeschwindigkeit und Sprache.
 - Sprachauswahl im Popup (de/en/fr/es).
 - Kontextmenü-Eintrag: **"WebTools: Auswahl vorlesen"** per Rechtsklick auf markierten Text.
