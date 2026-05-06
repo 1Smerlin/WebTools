@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>WebTools Fusion</title>
+    <title>WebTools</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
     <main>
-      <h1>WebTools Fusion</h1>
-      <p class="hint">Kombinierte Funktionen aus SpeechDictation + WebReader für Chromium.</p>
+      <h1>WebTools</h1>
+      <p class="hint">
+        Kombinierte Funktionen aus SpeechDictation + WebReader für Chromium.
+      </p>
 
       <section>
         <h2>Diktat</h2>
@@ -28,7 +30,14 @@
         <h2>Stimme</h2>
         <label>
           Geschwindigkeit
-          <input id="rate" type="range" min="0.6" max="1.8" step="0.1" value="1" />
+          <input
+            id="rate"
+            type="range"
+            min="0.6"
+            max="1.8"
+            step="0.1"
+            value="1"
+          />
         </label>
         <output id="rateValue">1.0x</output>
 

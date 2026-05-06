@@ -1,21 +1,25 @@
 let recognition = null;
 let dictationActive = false;
 let readRate = 1;
-let speechLang = 'de-DE';
+let speechLang = "de-DE";
 
-const getSpeechRecognition = () => window.SpeechRecognition || window.webkitSpeechRecognition;
+const getSpeechRecognition = () =>
+  window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const applyStoredSettings = async () => {
-  const stored = await chrome.storage.local.get({ readRate: 1, speechLang: 'de-DE' });
+  const stored = await chrome.storage.local.get({
+    readRate: 1,
+    speechLang: "de-DE",
+  });
   readRate = Number(stored.readRate) || 1;
-  speechLang = stored.speechLang || 'de-DE';
+  speechLang = stored.speechLang || "de-DE";
 };
 
 const getFocusedEditableElement = () => {
   const el = document.activeElement;
   if (!el) return null;
 
-  const isInput = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA';
+  const isInput = el.tagName === "INPUT" || el.tagName === "TEXTAREA";
   const isEditable = el.isContentEditable;
   return isInput || isEditable ? el : null;
 };
@@ -44,24 +48,24 @@ const insertTextAtCursor = (text) => {
   const end = el.selectionEnd ?? el.value.length;
   const before = el.value.slice(0, start);
   const after = el.value.slice(end);
-  const prefix = before && !before.endsWith(' ') ? ' ' : '';
+  const prefix = before && !before.endsWith(" ") ? " " : "";
   el.value = `${before}${prefix}${text}${after}`;
   el.selectionStart = el.selectionEnd = start + prefix.length + text.length;
-  el.dispatchEvent(new Event('input', { bubbles: true }));
+  el.dispatchEvent(new Event("input", { bubbles: true }));
   return true;
 };
 
 const startDictation = () => {
   const SpeechRecognition = getSpeechRecognition();
   if (!SpeechRecognition) {
-    alert('SpeechRecognition wird in diesem Chromium-Build nicht unterstützt.');
+    alert("SpeechRecognition wird in diesem Chromium-Build nicht unterstützt.");
     return false;
   }
 
   if (dictationActive) return true;
 
   recognition = new SpeechRecognition();
-  recognition.lang = speechLang || document.documentElement.lang || 'de-DE';
+  recognition.lang = speechLang || document.documentElement.lang || "de-DE";
   recognition.continuous = true;
   recognition.interimResults = false;
 
@@ -78,7 +82,7 @@ const startDictation = () => {
   };
 
   recognition.onerror = (event) => {
-    console.warn('[WebTools Fusion] Dictation error:', event.error);
+    console.warn("[WebTools] Dictation error:", event.error);
   };
 
   recognition.start();
@@ -101,35 +105,35 @@ const readText = (text) => {
 
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(cleaned);
-  utterance.lang = speechLang || document.documentElement.lang || 'de-DE';
+  utterance.lang = speechLang || document.documentElement.lang || "de-DE";
   utterance.rate = readRate;
   window.speechSynthesis.speak(utterance);
 };
 
 const readSelection = () => {
   const selected = window.getSelection()?.toString();
-  readText(selected || 'Bitte markiere zuerst Text auf der Seite.');
+  readText(selected || "Bitte markiere zuerst Text auf der Seite.");
 };
 
 const readPage = () => {
   const article = document.querySelector('article, main, [role="main"]');
-  const source = article?.innerText || document.body?.innerText || '';
+  const source = article?.innerText || document.body?.innerText || "";
   readText(source.slice(0, 5000));
 };
 
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local') return;
+  if (area !== "local") return;
   if (changes.readRate) {
     readRate = Number(changes.readRate.newValue) || 1;
   }
   if (changes.speechLang) {
-    speechLang = changes.speechLang.newValue || 'de-DE';
+    speechLang = changes.speechLang.newValue || "de-DE";
   }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.action) {
-    case 'toggleDictation':
+    case "toggleDictation":
       if (dictationActive) {
         stopDictation();
       } else {
@@ -137,31 +141,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       }
       sendResponse({ dictationActive, readRate, speechLang });
       break;
-    case 'readSelection':
+    case "readSelection":
       readSelection();
       sendResponse({ ok: true });
       break;
-    case 'readPage':
+    case "readPage":
       readPage();
       sendResponse({ ok: true });
       break;
-    case 'stopReading':
+    case "stopReading":
       window.speechSynthesis.cancel();
       sendResponse({ ok: true });
       break;
-    case 'setRate':
+    case "setRate":
       readRate = Number(message.readRate) || 1;
       sendResponse({ dictationActive, readRate, speechLang });
       break;
-    case 'setLang':
-      speechLang = message.speechLang || 'de-DE';
+    case "setLang":
+      speechLang = message.speechLang || "de-DE";
       if (recognition && dictationActive) {
         stopDictation();
         startDictation();
       }
       sendResponse({ dictationActive, readRate, speechLang });
       break;
-    case 'getStatus':
+    case "getStatus":
       sendResponse({ dictationActive, readRate, speechLang });
       break;
     default:

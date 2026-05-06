@@ -1,4 +1,4 @@
-# WebTools Fusion (Chromium Extension)
+# WebTools
 
 Dieses Repository enthält eine **fusionierte Chromium-Extension** mit Fokus auf:
 
